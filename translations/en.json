@@ -1,0 +1,37 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Electricity Tariff Comparison",
+        "description": "Compares a dynamic electricity tariff with a regular tariff using existing Home Assistant entities.",
+        "data": {
+          "name": "Name",
+          "meter_entity": "Electricity meter entity",
+          "spot_price_entity": "Spot price entity (EUR/kWh)",
+          "grid_fee_ct": "Other price components in cents",
+          "dynamic_base_eur_month": "Base fee for dynamic tariffs per month (EUR)",
+          "static_base_eur_month": "Base fee for regular tariffs per month (EUR)",
+          "static_price_ct": "Static price in cents, NOT EUR", 
+          "vat_percent": "Vat"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Electricity Tariff Comparison Options",
+        "data": {
+          "name": "Name",
+          "meter_entity": "Electricity meter entity",
+          "spot_price_entity": "Spot price entity (EUR/kWh)",
+          "dynamic_base_eur_month": "Base fee for dynamic tariffs per month (EUR)",
+          "static_base_eur_month": "Base fee for regular tariffs per month (EUR)",
+          "grid_fee_ct": "Other price components in cents, not EUR",
+          "static_price_ct": "Static price in cents, NOT EUR",
+          "vat_percent": "Vat"
+        }
+      }
+    }
+  }
+}
