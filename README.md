@@ -9,6 +9,8 @@ The integration is designed for local use, stores its data persistently, and exp
 <h2>What you need</h2>
 Required entities: an electricity meter sensor and a spot price sensor i.e. from Nord Pool. The meter provides consumption deltas, while the spot price sensor provides the current dynamic electricity price needed to compare real dynamic tariff costs with a fixed-price tariff. 
 
+For Germany Grid fees can be found here: https://tibber.com/de/strompreise 
+
 ## 📦 Manual Installation (without HACS)
 1. Download or clone latest release
 2. Copy it to your custom_components folder
