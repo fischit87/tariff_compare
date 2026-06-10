@@ -2,10 +2,12 @@
 <p>Anyone who would like to support, please contact me.</p>
 
 <h2>What is it</h2>
-Tariff Compare is a Home Assistant custom integration that compares a dynamic electricity tariff with a regular tariff using existing sensor entities. It calculates current energy costs, daily and monthly totals, and the resulting savings based on your meter readings, spot price entity, VAT handling, grid fees, and fixed monthly base charges. The integration is designed for local use, stores its data persistently, and exposes clear sensor entities for monitoring electricity costs and tariff differences directly in Home Assistant.
+Tariff Compare is a Home Assistant custom integration that compares a dynamic electricity tariff with a regular tariff using existing sensor entities. It calculates current energy costs, daily and monthly totals, and the resulting savings based on your meter readings, spot price entity, VAT handling, grid fees, and fixed monthly base charges. 
+
+The integration is designed for local use, stores its data persistently, and exposes clear sensor entities for monitoring electricity costs and tariff differences directly in Home Assistant.
 
 <h2>What you need</h2>
-Required entities: an electricity meter sensor and a spot price sensor. The meter provides consumption deltas, while the spot price sensor provides the current dynamic electricity price needed to compare real dynamic tariff costs with a fixed-price tariff. 
+Required entities: an electricity meter sensor and a spot price sensor i.e. from Nord Pool. The meter provides consumption deltas, while the spot price sensor provides the current dynamic electricity price needed to compare real dynamic tariff costs with a fixed-price tariff. 
 
 ## 📦 Manual Installation (without HACS)
 1. Download or clone latest release
