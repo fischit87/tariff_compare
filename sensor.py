@@ -19,58 +19,65 @@ from .coordinator import TariffCompareCoordinator
 SENSORS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="dynamic_price_ct_kwh",
-        name="Aktueller dynamischer Preis inkl. Steuern",
+        name="sensor.dynamic_price_ct_kwh",
         native_unit_of_measurement="ct/kWh",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:transmission-tower-export",
+        translation_key="dynamic_price_ct_kwh",
     ),
     SensorEntityDescription(
         key="today_dynamic_total_eur",
-        name="Heute Kosten dynamisch",
+        name="sensor.today_dynamic_total_eur",
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
         icon="mdi:cash-clock",
+        translation_key="today_dynamic_total_eur",
     ),
     SensorEntityDescription(
         key="today_static_total_eur",
-        name="Heute Kosten normal",
+        name="sensor.today_static_total_eur",
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
         icon="mdi:cash",
+        translation_key="today_static_total_eur",
     ),
     SensorEntityDescription(
         key="today_savings_eur",
-        name="Heute Ersparnis im dynamischen Stromtarif",
+        name="sensor.today_savings_eur",
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
         icon="mdi:piggy-bank",
+        translation_key="today_savings_eur",
     ),
     SensorEntityDescription(
         key="month_dynamic_total_eur",
-        name="Monat Kosten dynamisch",
+        name="sensor.month_dynamic_total_eur",
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
         icon="mdi:chart-line",
+        translation_key="month_dynamic_total_eur",
     ),
     SensorEntityDescription(
         key="month_static_total_eur",
-        name="Monat Kosten normal",
+        name="sensor.month_static_total_eur",
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
         icon="mdi:chart-box",
+        translation_key="month_static_total_eur",
     ),
     SensorEntityDescription(
         key="month_savings_eur",
-        name="Monat Ersparnis im dynamischen Stromtarif",
+        name="sensor.month_savings_eur",
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
         icon="mdi:cash-plus",
+        translation_key="month_savings_eur",
     ),
 )
 
@@ -88,7 +95,7 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class TariffCompareSensor(CoordinatorEntity[TariffCompareCoordinator], SensorEntity): 
+class TariffCompareSensor(CoordinatorEntity[TariffCompareCoordinator], SensorEntity):
     _attr_has_entity_name = True
 
     def __init__(
@@ -97,12 +104,11 @@ class TariffCompareSensor(CoordinatorEntity[TariffCompareCoordinator], SensorEnt
         coordinator: TariffCompareCoordinator,
         description: SensorEntityDescription,
     ) -> None:
-        super().__init__(coordinator)  # <<< NEW
+        super().__init__(coordinator)
         self.entity_description = description
         self._entry = entry
 
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
-        self._attr_name = description.name
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -115,7 +121,7 @@ class TariffCompareSensor(CoordinatorEntity[TariffCompareCoordinator], SensorEnt
 
     @property
     def available(self) -> bool:
-        return super().available  # <<< CHANGED
+        return super().available
 
     @property
     def native_value(self) -> StateType:
