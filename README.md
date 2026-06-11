@@ -14,4 +14,5 @@ For Germany Grid fees can be found here: https://tibber.com/de/strompreise
 ## 📦 Manual Installation (without HACS)
 1. Download or clone latest release
 2. Copy it to your custom_components folder
-3. In Home Assistant, go to Settings → Integration → Add Integration
+3. Restart Homeassistant
+4. In Home Assistant, go to Settings → Integration → Add Integration
