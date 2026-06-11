@@ -1,7 +1,7 @@
 {
   "domain": "tariff_compare",
   "name": "Vergleich dynamischer Stromtarif vs. Normal",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "documentation": "https://github.com/fischit87/tariff_compare",
   "issue_tracker": "https://github.com/fischit87/tariff_compare/issues",
   "config_flow": true,
