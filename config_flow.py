@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import logging
 import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.helpers import selector
+from homeassistant.core import HomeAssistant
 
 from .const import (
     CONF_DYNAMIC_BASE_EUR_MONTH,
@@ -22,6 +24,21 @@ from .const import (
     DOMAIN,
     SPOT_PRICE_UNITS,
 )
+
+_LOGGER = logging.getLogger(__name__)
+
+
+def _is_numeric_sensor_entity(hass: HomeAssistant, entity_id: str) -> bool:
+    """Check if entity is a numeric sensor."""
+    state = hass.states.get(entity_id)
+    if state is None:
+        return False
+    
+    try:
+        float(state.state)
+        return True
+    except (TypeError, ValueError):
+        return False
 
 
 def _schema_with_defaults(user_input: dict | None = None) -> vol.Schema:
@@ -101,15 +118,37 @@ class TariffCompareConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input: dict | None = None):
+        errors = {}
+        
         if user_input is not None:
-            return self.async_create_entry(
-                title=user_input[CONF_NAME],
-                data=user_input,
-            )
+            # Validate that meter and spot price entities are numeric sensors
+            if not _is_numeric_sensor_entity(self.hass, user_input[CONF_METER_ENTITY]):
+                errors[CONF_METER_ENTITY] = "not_numeric_sensor"
+            
+            if not _is_numeric_sensor_entity(self.hass, user_input[CONF_SPOT_PRICE_ENTITY]):
+                errors[CONF_SPOT_PRICE_ENTITY] = "not_numeric_sensor"
+            
+            # Validate grid fee is within reasonable bounds
+            grid_fee = float(user_input[CONF_GRID_FEE_CT])
+            if abs(grid_fee) > 100.0:
+                errors[CONF_GRID_FEE_CT] = "grid_fee_unreasonable"
+                _LOGGER.warning(f"Grid fee value {grid_fee} seems unreasonable (outside -100 to 100 ct/kWh)")
+            
+            if not errors:
+                return self.async_create_entry(
+                    title=user_input[CONF_NAME],
+                    data=user_input,
+                )
 
         return self.async_show_form(
             step_id="user",
-            data_schema=_schema_with_defaults(),
+            data_schema=_schema_with_defaults(user_input),
+            errors=errors,
+            description_placeholders={
+                "meter_entity_error": "Meter entity must be a numeric sensor",
+                "spot_price_error": "Spot price entity must be a numeric sensor",
+                "grid_fee_error": "Grid fee value seems unreasonable",
+            },
         )
 
     @staticmethod
@@ -119,11 +158,33 @@ class TariffCompareConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 class TariffCompareOptionsFlow(config_entries.OptionsFlow):
     async def async_step_init(self, user_input: dict | None = None):
+        errors = {}
+        
         if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
+            # Validate that meter and spot price entities are numeric sensors
+            if not _is_numeric_sensor_entity(self.hass, user_input[CONF_METER_ENTITY]):
+                errors[CONF_METER_ENTITY] = "not_numeric_sensor"
+            
+            if not _is_numeric_sensor_entity(self.hass, user_input[CONF_SPOT_PRICE_ENTITY]):
+                errors[CONF_SPOT_PRICE_ENTITY] = "not_numeric_sensor"
+            
+            # Validate grid fee is within reasonable bounds
+            grid_fee = float(user_input[CONF_GRID_FEE_CT])
+            if abs(grid_fee) > 100.0:
+                errors[CONF_GRID_FEE_CT] = "grid_fee_unreasonable"
+                _LOGGER.warning(f"Grid fee value {grid_fee} seems unreasonable (outside -100 to 100 ct/kWh)")
+            
+            if not errors:
+                return self.async_create_entry(title="", data=user_input)
 
         merged = {**self.config_entry.data, **self.config_entry.options}
         return self.async_show_form(
             step_id="init",
             data_schema=_schema_with_defaults(merged),
+            errors=errors,
+            description_placeholders={
+                "meter_entity_error": "Meter entity must be a numeric sensor",
+                "spot_price_error": "Spot price entity must be a numeric sensor",
+                "grid_fee_error": "Grid fee value seems unreasonable",
+            },
         )
