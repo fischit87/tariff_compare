@@ -11,8 +11,14 @@
           "grid_fee_ct": "Other price components in cents",
           "dynamic_base_eur_month": "Base fee for dynamic tariffs per month (EUR)",
           "static_base_eur_month": "Base fee for regular tariffs per month (EUR)",
-          "static_price_ct": "Static price in cents, NOT EUR", 
-          "vat_percent": "Vat"
+          "static_price_ct": "Static price in cents, NOT EUR",
+          "vat_percent": "VAT percentage",
+          "spot_price_unit": "Spot price unit",
+          "spot_price_includes_vat": "Spot price already includes VAT"
+        },
+        "error": {
+          "not_numeric_sensor": "Entity must be a numeric sensor",
+          "grid_fee_unreasonable": "Grid fee value seems unrealistic"
         }
       }
     }
@@ -29,8 +35,39 @@
           "static_base_eur_month": "Base fee for regular tariffs per month (EUR)",
           "grid_fee_ct": "Other price components in cents, not EUR",
           "static_price_ct": "Static price in cents, NOT EUR",
-          "vat_percent": "Vat"
+          "vat_percent": "VAT percentage",
+          "spot_price_unit": "Spot price unit",
+          "spot_price_includes_vat": "Spot price already includes VAT"
+        },
+        "error": {
+          "not_numeric_sensor": "Entity must be a numeric sensor",
+          "grid_fee_unreasonable": "Grid fee value seems unrealistic"
         }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "dynamic_price_ct_kwh": {
+        "name": "Current dynamic price incl. taxes"
+      },
+      "today_dynamic_total_eur": {
+        "name": "Today dynamic costs"
+      },
+      "today_static_total_eur": {
+        "name": "Today static costs"
+      },
+      "today_savings_eur": {
+        "name": "Today savings with dynamic tariff"
+      },
+      "month_dynamic_total_eur": {
+        "name": "Month dynamic costs"
+      },
+      "month_static_total_eur": {
+        "name": "Month static costs"
+      },
+      "month_savings_eur": {
+        "name": "Month savings with dynamic tariff"
       }
     }
   }
