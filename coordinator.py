@@ -103,9 +103,17 @@ class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):
         self.async_set_updated_data(self.data)  
 
     async def async_unload(self) -> None:
+        """Unload the coordinator and clean up resources."""
         if self._unsub_state:
             self._unsub_state()
             self._unsub_state = None
+        
+        # Save final state before unloading
+        try:
+            await self._store.async_save(self.data.as_dict())
+            _LOGGER.debug("Coordinator state saved during unload")
+        except Exception as e:
+            _LOGGER.error(f"Error saving coordinator state during unload: {e}")
 
     @callback
     async def _async_handle_source_change(
