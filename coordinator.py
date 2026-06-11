@@ -153,7 +153,8 @@ class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):
         try:
             meter_value = float(meter_state.state)
             spot_raw = float(spot_state.state)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError) as e:
+            _LOGGER.warning(f"Invalid state for meter/spot entities: {e}")
             return
 
         current_day = now.date().isoformat()
