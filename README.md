@@ -10,7 +10,7 @@ The integration is designed for local use, stores its data persistently, and exp
 Required entities: an electricity meter sensor and a spot price sensor i.e. from Nord Pool. The meter provides consumption deltas, while the spot price sensor provides the current dynamic electricity price needed to compare real dynamic tariff costs with a fixed-price tariff. 
 <br><br>
 <ul>
-  <li>Eelectricity meter sensor expects a total increasing sensor where every 0.1kWh is measured</li>
+  <li>Eelectricity meter sensor expects a total increasing sensor where every 0.1kWh is measured i.e. 13002,3 kWh -> 13002,4 kWh -> 13002,5 kWh</li>
   <li>Spotprice is expected in format 0,30€ </li>
 </ul>
 
