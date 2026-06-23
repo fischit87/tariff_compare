@@ -1,5 +1,5 @@
 <h2>I am not a developer, so this is just for fun and for anyone who might have use of it. </h2>
-<p>Anyone who would like to support, please contact me.</p>
+<p>Anyone who would like to support this, please contact me.</p>
 
 <h2>What is it</h2>
 Tariff Compare is a Home Assistant custom integration that compares a dynamic electricity tariff with a regular tariff using existing sensor entities. It calculates current energy costs, daily and monthly totals, and the resulting savings based on your meter readings, spot price entity, VAT handling, grid fees, and fixed monthly base charges. 
