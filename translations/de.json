@@ -1,73 +1,35 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Stromtarifvergleich",
-        "description": "Vergleicht einen dynamischen Stromtarif mit einem regulären Tarif unter Verwendung bestehender Home Assistant-Entitäten.",
-        "data": {
-          "name": "Name",
-          "meter_entity": "Stromzähler-Entität",
-          "spot_price_entity": "Börsenpreis-Entität (EUR/kWh)",
-          "grid_fee_ct": "Sonstige Preisbestandteile in Cent",
-          "dynamic_base_eur_month": "Grundgebühr für dynamische Tarife pro Monat (EUR)",
-          "static_base_eur_month": "Grundgebühr für reguläre Tarife pro Monat (EUR)",
-          "static_price_ct": "Statischer Preis in Cent, NICHT EUR",
-          "vat_percent": "MwSt. Satz",
-          "spot_price_unit": "Einheit des Börsenpreises",
-          "spot_price_includes_vat": "Börsenpreis beinhaltet bereits MwSt."
-        },
-        "error": {
-          "not_numeric_sensor": "Die Entität muss ein numerischer Sensor sein",
-          "grid_fee_unreasonable": "Der Netzgebührenwert scheint unrealistisch zu sein"
-        }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Optionen für den Stromtarifvergleich",
-        "data": {
-          "name": "Name",
-          "meter_entity": "Stromzähler-Entität",
-          "spot_price_entity": "Börsenpreis-Entität (EUR/kWh)",
-          "dynamic_base_eur_month": "Grundgebühr für dynamische Tarife pro Monat (EUR)",
-          "static_base_eur_month": "Grundgebühr für reguläre Tarife pro Monat (EUR)",
-          "grid_fee_ct": "Sonstige Preisbestandteile in Cent, nicht EUR",
-          "static_price_ct": "Statischer Preis in Cent, NICHT EUR",
-          "vat_percent": "MwSt. Satz",
-          "spot_price_unit": "Einheit des Börsenpreises",
-          "spot_price_includes_vat": "Börsenpreis beinhaltet bereits MwSt."
-        },
-        "error": {
-          "not_numeric_sensor": "Die Entität muss ein numerischer Sensor sein",
-          "grid_fee_unreasonable": "Der Netzgebührenwert scheint unrealistisch zu sein"
-        }
-      }
-    }
-  },
   "entity": {
     "sensor": {
       "dynamic_price_ct_kwh": {
-        "name": "Aktueller dynamischer Preis inkl. Steuern"
+        "name": "Dynamischer Arbeitspreis"
       },
       "today_dynamic_total_eur": {
-        "name": "Heute Kosten dynamisch"
+        "name": "Heute dynamische Gesamtkosten"
       },
       "today_static_total_eur": {
-        "name": "Heute Kosten normal"
+        "name": "Heute statische Gesamtkosten"
       },
       "today_savings_eur": {
-        "name": "Heute Ersparnis im dynamischen Stromtarif"
+        "name": "Heute Ersparnis"
       },
       "month_dynamic_total_eur": {
-        "name": "Monat Kosten dynamisch"
+        "name": "Monat dynamische Gesamtkosten"
       },
       "month_static_total_eur": {
-        "name": "Monat Kosten normal"
+        "name": "Monat statische Gesamtkosten"
       },
       "month_savings_eur": {
-        "name": "Monat Ersparnis im dynamischen Stromtarif"
+        "name": "Monat Ersparnis"
+      },
+      "year_dynamic_total_eur": {
+        "name": "Jahr dynamische Gesamtkosten"
+      },
+      "year_static_total_eur": {
+        "name": "Jahr statische Gesamtkosten"
+      },
+      "year_savings_eur": {
+        "name": "Jahr Ersparnis"
       }
     }
   }
