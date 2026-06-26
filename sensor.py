@@ -19,7 +19,7 @@ from .coordinator import TariffCompareCoordinator
 SENSORS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
         key="dynamic_price_ct_kwh",
-        name="sensor.dynamic_price_ct_kwh",
+        name=None,
         native_unit_of_measurement="ct/kWh",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:transmission-tower-export",
@@ -27,7 +27,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
     ),
     SensorEntityDescription(
         key="today_dynamic_total_eur",
-        name="sensor.today_dynamic_total_eur",
+        name=None,
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
@@ -36,7 +36,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
     ),
     SensorEntityDescription(
         key="today_static_total_eur",
-        name="sensor.today_static_total_eur",
+        name=None,
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
@@ -45,7 +45,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
     ),
     SensorEntityDescription(
         key="today_savings_eur",
-        name="sensor.today_savings_eur",
+        name=None,
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
@@ -54,7 +54,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
     ),
     SensorEntityDescription(
         key="month_dynamic_total_eur",
-        name="sensor.month_dynamic_total_eur",
+        name=None,
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
@@ -63,7 +63,7 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
     ),
     SensorEntityDescription(
         key="month_static_total_eur",
-        name="sensor.month_static_total_eur",
+        name=None,
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
@@ -72,12 +72,39 @@ SENSORS: tuple[SensorEntityDescription, ...] = (
     ),
     SensorEntityDescription(
         key="month_savings_eur",
-        name="sensor.month_savings_eur",
+        name=None,
         native_unit_of_measurement=CURRENCY_EURO,
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
         icon="mdi:cash-plus",
         translation_key="month_savings_eur",
+    ),
+    SensorEntityDescription(
+        key="year_dynamic_total_eur",
+        name=None,
+        native_unit_of_measurement=CURRENCY_EURO,
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        icon="mdi:chart-line-variant",
+        translation_key="year_dynamic_total_eur",
+    ),
+    SensorEntityDescription(
+        key="year_static_total_eur",
+        name=None,
+        native_unit_of_measurement=CURRENCY_EURO,
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        icon="mdi:chart-bar",
+        translation_key="year_static_total_eur",
+    ),
+    SensorEntityDescription(
+        key="year_savings_eur",
+        name=None,
+        native_unit_of_measurement=CURRENCY_EURO,
+        device_class=SensorDeviceClass.MONETARY,
+        state_class=SensorStateClass.TOTAL,
+        icon="mdi:cash-multiple",
+        translation_key="year_savings_eur",
     ),
 )
 
@@ -91,7 +118,6 @@ async def async_setup_entry(
         TariffCompareSensor(entry, coordinator, description)
         for description in SENSORS
     ]
-
     async_add_entities(entities)
 
 
@@ -107,7 +133,6 @@ class TariffCompareSensor(CoordinatorEntity[TariffCompareCoordinator], SensorEnt
         super().__init__(coordinator)
         self.entity_description = description
         self._entry = entry
-
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
 
     @property
