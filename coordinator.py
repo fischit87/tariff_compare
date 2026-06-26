@@ -42,30 +42,42 @@ class TariffData:
     last_spot_raw: float | None = None
     dynamic_price_ct_kwh: float = 0.0
     static_price_ct_kwh: float = 0.0
+
     today_dynamic_energy_cost_eur: float = 0.0
     today_static_energy_cost_eur: float = 0.0
     today_dynamic_total_eur: float = 0.0
     today_static_total_eur: float = 0.0
     today_savings_eur: float = 0.0
+
     month_dynamic_energy_cost_eur: float = 0.0
     month_static_energy_cost_eur: float = 0.0
     month_dynamic_total_eur: float = 0.0
     month_static_total_eur: float = 0.0
     month_savings_eur: float = 0.0
+
+    year_dynamic_energy_cost_eur: float = 0.0
+    year_static_energy_cost_eur: float = 0.0
+    year_dynamic_total_eur: float = 0.0
+    year_static_total_eur: float = 0.0
+    year_savings_eur: float = 0.0
+
     today_consumption_kwh: float = 0.0
     month_consumption_kwh: float = 0.0
+    year_consumption_kwh: float = 0.0
+
     last_delta_kwh: float = 0.0
     last_reset_day: str | None = None
     last_reset_month: str | None = None
+    last_reset_year: str | None = None
     updated_at: str | None = None
 
     def as_dict(self) -> dict:
         return {key: value for key, value in self.__dict__.items()}
 
 
-class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):  
+class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
-        super().__init__(  
+        super().__init__(
             hass,
             _LOGGER,
             name=f"{DOMAIN}_{entry.entry_id}",
@@ -89,31 +101,30 @@ class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):
             self.data.last_reset_day = now.date().isoformat()
         if self.data.last_reset_month is None:
             self.data.last_reset_month = f"{now.year}-{now.month:02d}"
+        if self.data.last_reset_year is None:
+            self.data.last_reset_year = f"{now.year}"
 
         entities = [
             self.config[CONF_METER_ENTITY],
             self.config[CONF_SPOT_PRICE_ENTITY],
         ]
-
         self._unsub_state = async_track_state_change_event(
             self.hass, entities, self._async_handle_source_change
         )
 
         await self.async_refresh_from_states()
-        self.async_set_updated_data(self.data)  
+        self.async_set_updated_data(self.data)
 
     async def async_unload(self) -> None:
-        """Unload the coordinator and clean up resources."""
         if self._unsub_state:
             self._unsub_state()
             self._unsub_state = None
-        
-        # Save final state before unloading
+
         try:
             await self._store.async_save(self.data.as_dict())
             _LOGGER.debug("Coordinator state saved during unload")
-        except Exception as e:
-            _LOGGER.error(f"Error saving coordinator state during unload: {e}")
+        except Exception as err:
+            _LOGGER.error("Error saving coordinator state during unload: %s", err)
 
     @callback
     async def _async_handle_source_change(
@@ -161,12 +172,13 @@ class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):
         try:
             meter_value = float(meter_state.state)
             spot_raw = float(spot_state.state)
-        except (TypeError, ValueError) as e:
-            _LOGGER.warning(f"Invalid state for meter/spot entities: {e}")
+        except (TypeError, ValueError) as err:
+            _LOGGER.warning("Invalid state for meter/spot entities: %s", err)
             return
 
         current_day = now.date().isoformat()
         current_month = f"{now.year}-{now.month:02d}"
+        current_year = f"{now.year}"
 
         if self.data.last_reset_day != current_day:
             self.data.today_dynamic_energy_cost_eur = 0.0
@@ -179,6 +191,12 @@ class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):
             self.data.month_static_energy_cost_eur = 0.0
             self.data.month_consumption_kwh = 0.0
             self.data.last_reset_month = current_month
+
+        if self.data.last_reset_year != current_year:
+            self.data.year_dynamic_energy_cost_eur = 0.0
+            self.data.year_static_energy_cost_eur = 0.0
+            self.data.year_consumption_kwh = 0.0
+            self.data.last_reset_year = current_year
 
         dynamic_price_ct = self._dynamic_total_price_ct(spot_raw)
         static_price_ct = float(self.config[CONF_STATIC_PRICE_CT])
@@ -197,15 +215,22 @@ class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):
 
         self.data.today_consumption_kwh += delta_kwh
         self.data.month_consumption_kwh += delta_kwh
+        self.data.year_consumption_kwh += delta_kwh
 
         self.data.today_dynamic_energy_cost_eur += dynamic_delta_cost_eur
         self.data.today_static_energy_cost_eur += static_delta_cost_eur
         self.data.month_dynamic_energy_cost_eur += dynamic_delta_cost_eur
         self.data.month_static_energy_cost_eur += static_delta_cost_eur
+        self.data.year_dynamic_energy_cost_eur += dynamic_delta_cost_eur
+        self.data.year_static_energy_cost_eur += static_delta_cost_eur
 
         days_in_month = self._days_in_current_month(now)
-        dynamic_base_daily_eur = float(self.config[CONF_DYNAMIC_BASE_EUR_MONTH]) / days_in_month
-        static_base_daily_eur = float(self.config[CONF_STATIC_BASE_EUR_MONTH]) / days_in_month
+        dynamic_base_daily_eur = (
+            float(self.config[CONF_DYNAMIC_BASE_EUR_MONTH]) / days_in_month
+        )
+        static_base_daily_eur = (
+            float(self.config[CONF_STATIC_BASE_EUR_MONTH]) / days_in_month
+        )
 
         self.data.today_dynamic_total_eur = (
             self.data.today_dynamic_energy_cost_eur + dynamic_base_daily_eur
@@ -229,13 +254,25 @@ class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):
             self.data.month_static_total_eur - self.data.month_dynamic_total_eur
         )
 
+        self.data.year_dynamic_total_eur = (
+            self.data.year_dynamic_energy_cost_eur
+            + (float(self.config[CONF_DYNAMIC_BASE_EUR_MONTH]) * now.month)
+        )
+        self.data.year_static_total_eur = (
+            self.data.year_static_energy_cost_eur
+            + (float(self.config[CONF_STATIC_BASE_EUR_MONTH]) * now.month)
+        )
+        self.data.year_savings_eur = (
+            self.data.year_static_total_eur - self.data.year_dynamic_total_eur
+        )
+
         self.data.last_meter_value = meter_value
         self.data.last_spot_raw = spot_raw
         self.data.last_delta_kwh = delta_kwh
         self.data.updated_at = now.isoformat()
 
         await self._store.async_save(self.data.as_dict())
-        self.async_set_updated_data(self.data)  
+        self.async_set_updated_data(self.data)
 
     def extra_state_attributes(self) -> dict:
         now = dt_util.now()
@@ -250,8 +287,12 @@ class TariffCompareCoordinator(DataUpdateCoordinator[TariffData]):
             ATTR_STATIC_BASE_DAILY_EUR: round(
                 float(self.config[CONF_STATIC_BASE_EUR_MONTH]) / days_in_month, 2
             ),
-            ATTR_DYNAMIC_BASE_MONTHLY_EUR: float(self.config[CONF_DYNAMIC_BASE_EUR_MONTH]),
-            ATTR_STATIC_BASE_MONTHLY_EUR: float(self.config[CONF_STATIC_BASE_EUR_MONTH]),
+            ATTR_DYNAMIC_BASE_MONTHLY_EUR: float(
+                self.config[CONF_DYNAMIC_BASE_EUR_MONTH]
+            ),
+            ATTR_STATIC_BASE_MONTHLY_EUR: float(
+                self.config[CONF_STATIC_BASE_EUR_MONTH]
+            ),
             ATTR_LAST_METER_VALUE: self.data.last_meter_value,
             ATTR_LAST_SPOT_VALUE: self.data.last_spot_raw,
             "meter_entity": self.config[CONF_METER_ENTITY],
