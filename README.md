@@ -45,7 +45,7 @@ The table uses the field names from the code. Monthly fee fields end in `_month`
 | `meter_entity` | Your cumulative, increasing electricity consumption sensor in **kWh**. |
 | `spot_price_entity` | The current Nord Pool price entity for your area, or a derived current-price sensor with known VAT treatment. |
 | `spot_price_unit` | Keep **`EUR_KWH`** for prices in EUR/kWh. Select `CT_KWH` only if the entity reports cents/kWh. |
-| `spot_price_includes_vat` | Set **`true` only when the entered value in grid_fee_ct includes VAT**. |
+| `spot_price_includes_vat` | Set **`true` only when the selected entity already includes VAT**. For the unmodified official Nord Pool sensor, use **`false`** (the default). |
 | `grid_fee_ct` | The additional consumption-based component of your dynamic tariff in **ct/kWh**, excluding the spot price and monthly base fee. For example, `18.85` means 18.85 ct/kWh. Check your own regional and contractual components at [Tibber electricity prices](https://tibber.com/de/strompreise) and in your contract; this is an illustrative value, not a universal or current rate. Include the applicable taxes, levies, grid charges, and other per-kWh additions not already included in your price entity. Enter the final VAT-inclusive amount: the integration adds this value unchanged. |
 | `dynamic_base_eur_month` | Your Tibber/dynamic tariff's fixed monthly base charge in **EUR/month**, including VAT. Include applicable fixed monthly components once; do not put them in `grid_fee_ct`. |
 | `static_price_ct` | The fixed tariff's final VAT-inclusive consumption price in **ct/kWh**. For example, enter `30.01` for **0.3001 EUR/kWh**. |
